@@ -907,14 +907,32 @@ final class MenuBarController: NSObject {
 
     private func setupMenuBar() {
         menuBarItem.menu = menu
-        menuBarItem.button?.title = "◉"
+        let icon = statusBarIcon(isTracking: false)
+        menuBarItem.button?.image = icon
+        menuBarItem.button?.imagePosition = .imageOnly
+        menuBarItem.button?.title = ""
         menuBarItem.button?.toolTip = "ChromeTracker"
+    }
+
+    private func statusBarIcon(isTracking _: Bool) -> NSImage? {
+        let appIcon = NSApplication.shared.applicationIconImage
+
+        guard let icon = appIcon?.copy() as? NSImage else {
+            let fallback = NSImage(systemSymbolName: "app.fill", accessibilityDescription: "ChromeTracker")
+            fallback?.isTemplate = true
+            return fallback
+        }
+
+        icon.size = NSSize(width: 16, height: 16)
+        icon.isTemplate = false
+        return icon
     }
 
     private func updateStatusTitle(totalSeconds: Int, currentDomain: String?) {
         let timerString = format(seconds: totalSeconds)
-        let symbol = currentDomain == nil ? "◌" : "◉"
-        menuBarItem.button?.title = "\(symbol) \(timerString)"
+        let isTracking = currentDomain != nil
+        menuBarItem.button?.image = statusBarIcon(isTracking: isTracking)
+        menuBarItem.button?.title = ""
         menuBarItem.button?.toolTip = currentDomain == nil
             ? "ChromeTracker: Total \(timerString)"
             : "Current: \(currentDomain!)\nTotal: \(timerString)"
