@@ -1,0 +1,6 @@
+# SwiftPM / build artifacts
+.build/
+# Distribution output
+dist/
+# macOS junk
+.DS_Store
